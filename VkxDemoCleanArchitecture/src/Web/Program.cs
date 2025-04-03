@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using VkxDemoCleanArchitecture.Infrastructure.Data;
+using VkxDemoCleanArchitecture.Web.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,11 @@ else
 app.UseHealthChecks("/health");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseMiddleware<ErrorExceptionMiddleware>(); 
+
+app.UseRouting();
+app.UseAuthorization();
+
 
 app.UseSwaggerUi(settings =>
 {
@@ -45,8 +51,6 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.MapFallbackToFile("index.html");
-
-app.UseExceptionHandler(options => { });
 
 app.Map("/", () => Results.Redirect("/api"));
 
