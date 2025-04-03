@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using VkxDemoCleanArchitecture.Application.Common.Models;
 using VkxDemoCleanArchitecture.Infrastructure.Data;
 using VkxDemoCleanArchitecture.Web.Middleware;
 
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(option =>
     var cnt = builder.Configuration.GetConnectionString("DefaultConnection");
     option.UseSqlServer(cnt);
 });
+builder.Services.Configure<AppSettingsOptions>(builder.Configuration.GetSection("StocksSettings"));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
