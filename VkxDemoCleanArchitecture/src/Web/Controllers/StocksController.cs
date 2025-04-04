@@ -24,7 +24,7 @@ public class StocksController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _mediator.Send(new GetStockByIdQuery { Id = id });
         return Ok(result);
@@ -44,7 +44,7 @@ public class StocksController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id,CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(Guid id,CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new DeleteStockCommand { Id = id },cancellationToken);
         return Ok(result);

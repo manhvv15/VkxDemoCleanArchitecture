@@ -13,30 +13,37 @@ public class GetsPagingStockQueryHandler : IRequestHandler<GetsPagingStockQuery,
 {
     private readonly IApplicationDbContext _context;
     private readonly AppSettingsOptions _options;
+    private readonly ICacheService _cacheService;
 
-    public GetsPagingStockQueryHandler(IApplicationDbContext context, IOptions<AppSettingsOptions> options)
+    public GetsPagingStockQueryHandler(IApplicationDbContext context, IOptions<AppSettingsOptions> options, ICacheService cacheService)
     {
         _context = context;
         _options = options.Value;
+        _cacheService = cacheService;
     }
 
     public async Task<PaginatedList<GetsPagingStockResponse>> Handle(GetsPagingStockQuery request, CancellationToken cancellationToken)
     {
         long marketCapOptions = _options.MarketCap;
-        var query = _context.Stocks
-            .Where(x => x.Symbol.Contains(request.Keyword))
-            .Where(x => x.MarketCap > marketCapOptions)
-            .Select(x => new GetsPagingStockResponse
-            {
-                Id = x.Id,
-                Symbol = x.Symbol,
-                CompanyName = x.CompanyName,
-                Purchase = x.Purchase,
-                LastDiv = x.LastDiv,
-                Industry = x.Industry,
-                MarketCap = x.MarketCap
-            });
+        var cacheKey = $"stocks";
+        return await _cacheService.GetOrSetAsync(cacheKey, async () =>
+        {
+            var query = _context.Stocks
+                .Where(x => x.Symbol.Contains(request.Keyword))
+                .Where(x => x.MarketCap > marketCapOptions)
+                .Select(x => new GetsPagingStockResponse
+                {
+                    Id = x.Id,
+                    Symbol = x.Symbol,
+                    CompanyName = x.CompanyName,
+                    Purchase = x.Purchase,
+                    LastDiv = x.LastDiv,
+                    Industry = x.Industry,
+                    MarketCap = x.MarketCap
+                });
 
-        return await PaginatedList<GetsPagingStockResponse>.CreateAsync(query, request.PageNumber, request.PageSize);
+            return await PaginatedList<GetsPagingStockResponse>.CreateAsync(query, request.PageNumber, request.PageSize);
+
+        });
     }
 }

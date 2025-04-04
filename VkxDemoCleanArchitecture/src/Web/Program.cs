@@ -1,44 +1,30 @@
-using Microsoft.EntityFrameworkCore;
-using VkxDemoCleanArchitecture.Application.Common.Models;
 using VkxDemoCleanArchitecture.Infrastructure.Data;
+using VkxDemoCleanArchitecture.Web;
 using VkxDemoCleanArchitecture.Web.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.ConfigureServices(builder.Configuration, builder.Environment);
 builder.Services.AddKeyVaultIfConfigured(builder.Configuration);
 
-builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddWebServices();
-builder.Services.AddControllers();
-builder.Services.AddDbContext<ApplicationDbContext>(option =>
-{
-    var cnt = builder.Configuration.GetConnectionString("DefaultConnection");
-    option.UseSqlServer(cnt);
-});
-builder.Services.Configure<AppSettingsOptions>(builder.Configuration.GetSection("StocksSettings"));
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     await app.InitialiseDatabaseAsync();
 }
 else
 {
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHealthChecks("/health");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseMiddleware<ErrorExceptionMiddleware>(); 
+app.UseMiddleware<ErrorExceptionMiddleware>();
 
 app.UseRouting();
 app.UseAuthorization();
-
 
 app.UseSwaggerUi(settings =>
 {
@@ -51,11 +37,8 @@ app.MapControllerRoute(
     pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapRazorPages();
-
 app.MapFallbackToFile("index.html");
-
 app.Map("/", () => Results.Redirect("/api"));
-
 app.MapEndpoints();
 
 app.Run();

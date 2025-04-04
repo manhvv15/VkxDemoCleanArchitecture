@@ -4,7 +4,7 @@ using VkxDemoCleanArchitecture.Domain.Common;
 namespace VkxDemoCleanArchitecture.Application.Stocks.Queries.GetById;
 public class GetStockByIdQuery : IRequest<GetStockByIdResponse>
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 }
 public class GetStockByIdQueryHandler : IRequestHandler<GetStockByIdQuery, GetStockByIdResponse>
 {

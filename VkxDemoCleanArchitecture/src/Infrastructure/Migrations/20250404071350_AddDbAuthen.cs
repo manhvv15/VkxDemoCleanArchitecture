@@ -6,11 +6,23 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddDatabase : Migration
+    public partial class AddDbAuthen : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "actions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_actions", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -51,21 +63,27 @@ namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Stocks",
+                name: "objects",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Symbol = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Purchase = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    LastDiv = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Industry = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MarketCap = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Stocks", x => x.Id);
+                    table.PrimaryKey("PK_objects", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "roles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_roles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -84,6 +102,20 @@ namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TodoLists", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "users",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -193,23 +225,30 @@ namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Comments",
+                name: "permissions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StockId = table.Column<int>(type: "int", nullable: true)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ActionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ObjectId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Method = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Endpoint = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.PrimaryKey("PK_permissions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comments_Stocks_StockId",
-                        column: x => x.StockId,
-                        principalTable: "Stocks",
-                        principalColumn: "Id");
+                        name: "FK_permissions_actions_ActionId",
+                        column: x => x.ActionId,
+                        principalTable: "actions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_permissions_objects_ObjectId",
+                        column: x => x.ObjectId,
+                        principalTable: "objects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -238,6 +277,100 @@ namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
                         principalTable: "TodoLists",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "stocks",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Symbol = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Purchase = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    LastDiv = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Industry = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MarketCap = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_stocks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_stocks_users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_roles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user_roles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_user_roles_roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_user_roles_users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "role_permissions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PermissionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_role_permissions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_role_permissions_permissions_PermissionId",
+                        column: x => x.PermissionId,
+                        principalTable: "permissions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_role_permissions_roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "comments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StockId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_comments_stocks_StockId",
+                        column: x => x.StockId,
+                        principalTable: "stocks",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -280,14 +413,49 @@ namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_StockId",
-                table: "Comments",
+                name: "IX_comments_StockId",
+                table: "comments",
                 column: "StockId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_permissions_ActionId",
+                table: "permissions",
+                column: "ActionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_permissions_ObjectId",
+                table: "permissions",
+                column: "ObjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_role_permissions_PermissionId",
+                table: "role_permissions",
+                column: "PermissionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_role_permissions_RoleId",
+                table: "role_permissions",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_stocks_UserId",
+                table: "stocks",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TodoItems_ListId",
                 table: "TodoItems",
                 column: "ListId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_roles_RoleId",
+                table: "user_roles",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_roles_UserId",
+                table: "user_roles",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -309,10 +477,16 @@ namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Comments");
+                name: "comments");
+
+            migrationBuilder.DropTable(
+                name: "role_permissions");
 
             migrationBuilder.DropTable(
                 name: "TodoItems");
+
+            migrationBuilder.DropTable(
+                name: "user_roles");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -321,10 +495,25 @@ namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Stocks");
+                name: "stocks");
+
+            migrationBuilder.DropTable(
+                name: "permissions");
 
             migrationBuilder.DropTable(
                 name: "TodoLists");
+
+            migrationBuilder.DropTable(
+                name: "roles");
+
+            migrationBuilder.DropTable(
+                name: "users");
+
+            migrationBuilder.DropTable(
+                name: "actions");
+
+            migrationBuilder.DropTable(
+                name: "objects");
         }
     }
 }

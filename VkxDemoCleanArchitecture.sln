@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "VkxDemoCleanArchitecture\src\Application\Application.csproj", "{4B03A77F-5331-4C49-981F-1F9F2DAA7C87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "VkxDemoCleanArchitecture\src\Application\Application.csproj", "{4B03A77F-5331-4C49-981F-1F9F2DAA7C87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "VkxDemoCleanArchitecture\src\Domain\Domain.csproj", "{9ECCF796-C7B2-4AA0-A7CF-ABB7829252FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "VkxDemoCleanArchitecture\src\Domain\Domain.csproj", "{9ECCF796-C7B2-4AA0-A7CF-ABB7829252FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "VkxDemoCleanArchitecture\src\Infrastructure\Infrastructure.csproj", "{D14EE250-0BE6-4F31-B077-0F972E216421}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "VkxDemoCleanArchitecture\src\Infrastructure\Infrastructure.csproj", "{D14EE250-0BE6-4F31-B077-0F972E216421}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "VkxDemoCleanArchitecture\src\Web\Web.csproj", "{792FEE1C-62A6-4D39-93FB-8897459C9170}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "VkxDemoCleanArchitecture\src\Web\Web.csproj", "{792FEE1C-62A6-4D39-93FB-8897459C9170}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

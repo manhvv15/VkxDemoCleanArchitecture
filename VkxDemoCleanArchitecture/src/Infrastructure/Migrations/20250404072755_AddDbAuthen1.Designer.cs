@@ -12,8 +12,8 @@ using VkxDemoCleanArchitecture.Infrastructure.Data;
 namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250402074638_AddDatabase")]
-    partial class AddDatabase
+    [Migration("20250404072755_AddDbAuthen1")]
+    partial class AddDbAuthen1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,19 +158,32 @@ namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.Action", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("actions");
+                });
+
             modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.Comment", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("StockId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("StockId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -179,16 +192,95 @@ namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
 
                     b.HasIndex("StockId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("comments");
+                });
+
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.Object", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("objects");
+                });
+
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.Permission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ActionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Endpoint")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Method")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ObjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActionId");
+
+                    b.HasIndex("ObjectId");
+
+                    b.ToTable("permissions");
+                });
+
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("roles");
+                });
+
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.RolePermission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("PermissionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PermissionId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("role_permissions");
                 });
 
             modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.Stock", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
@@ -211,9 +303,14 @@ namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Stocks");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("stocks");
                 });
 
             modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.TodoItem", b =>
@@ -291,6 +388,50 @@ namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TodoLists");
+                });
+
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("users");
+                });
+
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.UserRole", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("user_roles");
                 });
 
             modelBuilder.Entity("VkxDemoCleanArchitecture.Infrastructure.Identity.ApplicationUser", b =>
@@ -418,6 +559,55 @@ namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
                     b.Navigation("Stock");
                 });
 
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.Permission", b =>
+                {
+                    b.HasOne("VkxDemoCleanArchitecture.Domain.Entities.Action", "Action")
+                        .WithMany("Permissions")
+                        .HasForeignKey("ActionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VkxDemoCleanArchitecture.Domain.Entities.Object", "Object")
+                        .WithMany("Permissions")
+                        .HasForeignKey("ObjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Action");
+
+                    b.Navigation("Object");
+                });
+
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.RolePermission", b =>
+                {
+                    b.HasOne("VkxDemoCleanArchitecture.Domain.Entities.Permission", "Permission")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VkxDemoCleanArchitecture.Domain.Entities.Role", "Role")
+                        .WithMany("RolePermissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.Stock", b =>
+                {
+                    b.HasOne("VkxDemoCleanArchitecture.Domain.Entities.User", "User")
+                        .WithMany("Stocks")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.TodoItem", b =>
                 {
                     b.HasOne("VkxDemoCleanArchitecture.Domain.Entities.TodoList", "List")
@@ -452,6 +642,47 @@ namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.UserRole", b =>
+                {
+                    b.HasOne("VkxDemoCleanArchitecture.Domain.Entities.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VkxDemoCleanArchitecture.Domain.Entities.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.Action", b =>
+                {
+                    b.Navigation("Permissions");
+                });
+
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.Object", b =>
+                {
+                    b.Navigation("Permissions");
+                });
+
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.Permission", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.Role", b =>
+                {
+                    b.Navigation("RolePermissions");
+
+                    b.Navigation("UserRoles");
+                });
+
             modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.Stock", b =>
                 {
                     b.Navigation("Comments");
@@ -460,6 +691,13 @@ namespace VkxDemoCleanArchitecture.Infrastructure.Migrations
             modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.TodoList", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("VkxDemoCleanArchitecture.Domain.Entities.User", b =>
+                {
+                    b.Navigation("Stocks");
+
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

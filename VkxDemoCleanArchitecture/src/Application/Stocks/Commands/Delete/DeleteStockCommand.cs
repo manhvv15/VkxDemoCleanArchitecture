@@ -4,7 +4,7 @@ using VkxDemoCleanArchitecture.Domain.Common;
 namespace VkxDemoCleanArchitecture.Application.Stocks.Command.Delete;
 public class DeleteStockCommand : IRequest<Unit>
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 }
 public class DeleteStockCommandHandler : IRequestHandler<DeleteStockCommand, Unit>
 {

@@ -4,7 +4,7 @@ using VkxDemoCleanArchitecture.Domain.Common;
 namespace VkxDemoCleanArchitecture.Application.Stocks.Command.Update;
 public class UpdateStockCommand : IRequest<Unit>
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Symbol { get; set; } = string.Empty;
     public string CompanyName { get; set; } = string.Empty;
     public decimal Purchase { get; set; }

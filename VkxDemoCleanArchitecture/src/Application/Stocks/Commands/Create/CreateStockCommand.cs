@@ -5,13 +5,13 @@ using VkxDemoCleanArchitecture.Domain.Entities;
 namespace VkxDemoCleanArchitecture.Application.Stocks.Command.Create;
 public class CreateStockCommand : IRequest<Unit>
 {
-    public int Id { get; set; }
     public string Symbol { get; set; } = string.Empty;
     public string CompanyName { get; set; } = string.Empty;
     public decimal Purchase { get; set; }
     public decimal LastDiv { get; set; }
     public string Industry { get; set; } = string.Empty;
     public long MarketCap { get; set; }
+    public Guid UserId { get; set; }
 }
 
 public class CreateStockCommandHandler : IRequestHandler<CreateStockCommand, Unit>
@@ -31,7 +31,8 @@ public class CreateStockCommandHandler : IRequestHandler<CreateStockCommand, Uni
             Purchase = request.Purchase,
             LastDiv = request.LastDiv,
             Industry = request.Industry,
-            MarketCap = request.MarketCap
+            MarketCap = request.MarketCap,
+            UserId = request.UserId
         };
 
         _context.Stocks.Add(entity);

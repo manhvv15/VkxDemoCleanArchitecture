@@ -4,7 +4,7 @@ using VkxDemoCleanArchitecture.Application.Common.Models;
 namespace VkxDemoCleanArchitecture.Application.Stocks.Queries.GetsPaging;
 public class GetsPagingStockResponse
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Symbol { get; set; } = string.Empty;
     public string CompanyName { get; set; } = string.Empty;
     public decimal Purchase { get; set; }
