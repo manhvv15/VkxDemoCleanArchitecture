@@ -40,11 +40,13 @@ public class JwtService : IAuthService
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+        var expiry = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:TokenExpiryInDays"] ?? "1"));
+
         var token = new JwtSecurityToken(
             issuer: _config["Jwt:Issuer"],
             audience: _config["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddDays(1),
+            expires: expiry,
             signingCredentials: creds
         );
 
@@ -54,7 +56,6 @@ public class JwtService : IAuthService
     public async Task<User?> ValidateUserAsync(string username, string password)
     {
         var user = await _context.AppUsers.FirstOrDefaultAsync(x => x.Username == username);
-
         if (user == null) return null;
 
         var isValid = BCrypt.Net.BCrypt.Verify(password, user.Password);

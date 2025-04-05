@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using VkxDemoCleanArchitecture.Application.Stocks.Command.Create;
 using VkxDemoCleanArchitecture.Application.Stocks.Command.Delete;
 using VkxDemoCleanArchitecture.Application.Stocks.Command.Update;
@@ -6,6 +7,7 @@ using VkxDemoCleanArchitecture.Application.Stocks.Queries.GetById;
 using VkxDemoCleanArchitecture.Application.Stocks.Queries.GetsPaging;
 
 namespace VkxDemoCleanArchitecture.Web.Controllers;
+//[Authorize]
 [Route("api/stocks")]
 public class StocksController : ControllerBase
 {
@@ -15,7 +17,7 @@ public class StocksController : ControllerBase
     {
         _mediator = mediator;
     }
- 
+
     [HttpGet("paging")]
     public async Task<IActionResult> GetPaging([FromQuery] GetsPagingStockQuery query)
     {
@@ -31,22 +33,23 @@ public class StocksController : ControllerBase
     }
 
     [HttpPost]
+    //[Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody] CreateStockCommand command)
     {
         var result = await _mediator.Send(command);
         return Ok(result);
     }
     [HttpPut]
-    public async Task<IActionResult> Update( [FromBody] UpdateStockCommand command)
+    public async Task<IActionResult> Update([FromBody] UpdateStockCommand command)
     {
         var result = await _mediator.Send(command);
         return Ok(result);
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id,CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new DeleteStockCommand { Id = id },cancellationToken);
+        var result = await _mediator.Send(new DeleteStockCommand { Id = id }, cancellationToken);
         return Ok(result);
     }
 }

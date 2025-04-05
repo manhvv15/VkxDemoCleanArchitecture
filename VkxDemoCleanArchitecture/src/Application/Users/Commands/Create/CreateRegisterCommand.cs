@@ -16,12 +16,10 @@ public class CreateRegisterCommand : IRequest<Unit>
 public class CreateRegisterCommandHandler : IRequestHandler<CreateRegisterCommand, Unit>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IAuthService _authService;
 
-    public CreateRegisterCommandHandler(IApplicationDbContext context, IAuthService authService)
+    public CreateRegisterCommandHandler(IApplicationDbContext context)
     {
         _context = context;
-        _authService = authService;
     }
 
     public async Task<Unit> Handle(CreateRegisterCommand request, CancellationToken cancellationToken)

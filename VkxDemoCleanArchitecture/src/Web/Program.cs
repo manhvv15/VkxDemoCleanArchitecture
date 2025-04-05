@@ -36,6 +36,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapRazorPages();
 app.MapFallbackToFile("index.html");
 app.Map("/", () => Results.Redirect("/api"));
