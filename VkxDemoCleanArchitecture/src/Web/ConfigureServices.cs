@@ -9,6 +9,8 @@ using VkxDemoCleanArchitecture.Application.Common.Interfaces;
 using VkxDemoCleanArchitecture.Application.Common.Models;
 using VkxDemoCleanArchitecture.Infrastructure.Data;
 using VkxDemoCleanArchitecture.Infrastructure.Identity;
+using MassTransit;
+using VkxDemoCleanArchitecture.Application.Comments.Commands;
 
 namespace VkxDemoCleanArchitecture.Web;
 
@@ -68,6 +70,22 @@ public static class ServiceConfiguration
 
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
+        services.AddMassTransit(x =>
+        {
+            x.AddConsumer<CommentCreatedConsumer>();
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host("rabbitmq", h =>
+                {
+                    h.Username("guest");
+                    h.Password("guest");
+                });
+                cfg.ReceiveEndpoint("comment-created-queue", e =>
+                {
+                    e.ConfigureConsumer<CommentCreatedConsumer>(context);
+                });
+            });
+        });
 
         services.AddControllers();
         services.AddRazorPages();
