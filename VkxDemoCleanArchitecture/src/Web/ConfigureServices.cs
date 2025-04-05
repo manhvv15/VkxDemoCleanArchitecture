@@ -67,6 +67,8 @@ public static class ServiceConfiguration
             .AddDefaultTokenProviders();
 
         services.AddScoped<IIdentityService, IdentityService>();
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
+
         services.AddControllers();
         services.AddRazorPages();
         services.AddHealthChecks();
